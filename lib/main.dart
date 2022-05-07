@@ -59,6 +59,9 @@ class PuzzlePage extends StatefulWidget {
 }
 
 class _PuzzlePageState extends State<PuzzlePage> {
+
+  List<int> tileNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +85,10 @@ class _PuzzlePageState extends State<PuzzlePage> {
           children: [
             Expanded(
               child: Center(
-                child: TilesView(),
+                child: TilesView(
+                  numbers: tileNumbers,
+                  isCorrect: calcIsCorrect(tileNumbers),
+                ),
               ),
             ),
             SizedBox(
@@ -98,10 +104,28 @@ class _PuzzlePageState extends State<PuzzlePage> {
       ),
     );
   }
+
+  bool calcIsCorrect(List<int> numbers) {
+    final correctNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+    for (int i = 0; i < correctNumbers.length; i++) {
+      if (numbers[i] != correctNumbers[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 class TilesView extends StatelessWidget {
-  const TilesView({ Key? key }) : super(key: key);
+
+  final List<int> numbers;
+  final bool isCorrect;
+
+  const TilesView({ 
+    Key? key,
+    required this.numbers,
+    required this.isCorrect,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -112,17 +136,15 @@ class TilesView extends StatelessWidget {
       crossAxisSpacing: 24,
       mainAxisSpacing: 24,
       padding: const EdgeInsets.symmetric(vertical: 24),
-      children: [
-        TileView(number: 1, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 2, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 3, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 4, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 5, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 6, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 7, color: Colors.blue, onPressed: () => {}),
-        TileView(number: 8, color: Colors.blue, onPressed: () => {}),
-        Container(),
-      ],
+      children: numbers
+        .map((number) {
+          if (number == 0) { return Container(); }
+          return TileView(
+            number: number,
+            color: isCorrect ? Colors.blue : Colors.green,
+            onPressed: () => {},
+          );
+        }).toList(),
     );
   }
 }
